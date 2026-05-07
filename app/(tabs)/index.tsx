@@ -10,6 +10,15 @@ import { Link } from 'expo-router';
 import { Button } from 'react-native';
 
 export default function HomeScreen() {
+  // Hàm xử lý bắn Metric lên Sentry
+  // Hàm xử lý bắn Metric
+  const handleTestMetric = () => {
+    Sentry.metrics.count('button_clicked_total', 1, { // Đổi 'increment' thành 'count'
+      attributes: { button_name: 'test_metric_button' },
+    });
+    console.log('Đã bắn Metric!');
+  };
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -22,13 +31,22 @@ export default function HomeScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
-        <Button 
-          title="Try Sentry Error!" 
-          onPress={() => { 
+      </ThemedView>
+
+      {/* Khu vực chứa các nút test Sentry */}
+      <ThemedView style={styles.stepContainer}>
+        <Button
+          title="Try Sentry Error!"
+          onPress={() => {
             Sentry.captureException(new Error('First error'));
-          }} 
+          }}
+        />
+        <Button 
+          title="Bắn thử Metric lên Sentry" 
+          onPress={handleTestMetric} 
         />
       </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
