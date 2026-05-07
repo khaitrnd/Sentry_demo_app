@@ -10,13 +10,24 @@ import { Link } from 'expo-router';
 import { Button } from 'react-native';
 
 export default function HomeScreen() {
-  // Hàm xử lý bắn Metric lên Sentry
   // Hàm xử lý bắn Metric
   const handleTestMetric = () => {
-    Sentry.metrics.count('button_clicked_total', 1, { // Đổi 'increment' thành 'count'
+    Sentry.metrics.count('button_clicked_total', 1, {
       attributes: { button_name: 'test_metric_button' },
     });
     console.log('Đã bắn Metric!');
+  };
+
+  // Hàm xử lý bắn Trace
+  const handleTestTrace = () => {
+    Sentry.startSpanManual({ name: "test_performance_trace", op: "ui.action" }, (span) => {
+      console.log("Đang xử lý tác vụ...");
+  
+      setTimeout(() => {
+        console.log("Hoàn thành tác vụ!");
+        span?.end(); 
+      }, 1500);
+    });
   };
 
   return (
@@ -44,6 +55,12 @@ export default function HomeScreen() {
         <Button 
           title="Bắn thử Metric lên Sentry" 
           onPress={handleTestMetric} 
+        />
+        {/* Nút Tạo Trace đã được thêm vào đây */}
+        <Button 
+          title="Tạo biểu đồ Trace" 
+          onPress={handleTestTrace} 
+          color="#841584" 
         />
       </ThemedView>
 
